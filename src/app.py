@@ -18,7 +18,7 @@ def index():
     return render_template("index.html")
 
 
-@socket.on("start", namespace="/cosmos-db-nosql")
+@socket.on("start", namespace="/cosmos-db-table")
 def start(data):
     emitOutput("Current Status:\tStarting...")
     runDemo(emitOutput)
