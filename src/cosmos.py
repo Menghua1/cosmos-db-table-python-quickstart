@@ -16,15 +16,15 @@ def runDemo(writeOutput):
     # <create_client>
     accountName = os.getenv("CONFIGURATION__AZURECOSMOSDB__ACCOUNTNAME")
     if not accountName:
-        raise EnvironmentError("Azure Cosmos DB for NoSQL account name not set.")
+        raise EnvironmentError("Azure Cosmos DB for Table account name not set.")
 
     endpoint = os.getenv("CONFIGURATION__AZURECOSMOSDB__ENDPOINT")
     if not endpoint:
-        raise EnvironmentError("Azure Cosmos DB for NoSQL account endpoint not set.")
+        raise EnvironmentError("Azure Cosmos DB for Table account endpoint not set.")
 
     key = os.getenv("CONFIGURATION__AZURECOSMOSDB__KEY")
     if not key:
-        raise EnvironmentError("Azure Cosmos DB for NoSQL write key not set.")
+        raise EnvironmentError("Azure Cosmos DB for Table write key not set.")
 
     credential = AzureNamedKeyCredential(accountName, key)
 

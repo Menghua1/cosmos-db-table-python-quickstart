@@ -185,6 +185,10 @@ module containerAppsApp 'br/public:avm/res/app/container-app:0.9.0' = {
           value: 'https://${cosmosDbAccount.outputs.name}.table.cosmos.azure.com:443/'
         }
         {
+          name: 'azure-cosmos-db-table-account-name'
+          value: cosmosDbAccount.outputs.name
+        }
+        {
           identity: managedIdentity.outputs.resourceId
           name: 'azure-cosmos-db-table-write-key'
           keyVaultUrl: cosmosDbAccount.outputs.exportedSecrets['key-vault-secret-azure-cosmos-db-table-key'].secretUri
@@ -200,6 +204,10 @@ module containerAppsApp 'br/public:avm/res/app/container-app:0.9.0' = {
           memory: '.5Gi'
         }
         env: [
+          {
+            name: 'CONFIGURATION__AZURECOSMOSDB__ACCOUNTNAME'
+            secretRef: 'azure-cosmos-db-table-account-name'
+          }
           {
             name: 'CONFIGURATION__AZURECOSMOSDB__ENDPOINT'
             secretRef: 'azure-cosmos-db-table-endpoint'
@@ -222,7 +230,10 @@ module containerAppsApp 'br/public:avm/res/app/container-app:0.9.0' = {
 output CONFIGURATION__AZURECOSMOSDB__ACCOUNTNAME string = cosmosDbAccount.outputs.name
 output CONFIGURATION__AZURECOSMOSDB__ENDPOINT string = 'https://${cosmosDbAccount.outputs.name}.table.cosmos.azure.com:443/'
 #disable-next-line outputs-should-not-contain-secrets // This secret is required
-output CONFIGURATION__AZURECOSMOSDB__KEY string = listKeys(resourceId('Microsoft.DocumentDB/databaseAccounts', 'cosmos-db-table-${resourceToken}'), '2021-04-15').primaryMasterKey
+output CONFIGURATION__AZURECOSMOSDB__KEY string = listKeys(
+  resourceId('Microsoft.DocumentDB/databaseAccounts', 'cosmos-db-table-${resourceToken}'),
+  '2021-04-15'
+).primaryMasterKey
 output CONFIGURATION__AZURECOSMOSDB__TABLENAME string = tableName
 
 // Azure Container Registry outputs
