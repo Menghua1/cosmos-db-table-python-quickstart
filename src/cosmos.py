@@ -57,13 +57,13 @@ def runDemo(writeOutput):
     created_entity = table.upsert_entity(new_entity)
     writeOutput(f"Upserted entity:\t{created_entity}")
 
-    existing_item = table.get_entity(
+    existing_entity = table.get_entity(
         row_key="70b63682-b93a-4c77-aad2-65501347265f",
         partition_key="gear-surf-surfboards",
     )
 
-    writeOutput(f"Read entity id:\t{existing_item['RowKey']}")
-    writeOutput(f"Read entity:\t{existing_item}")
+    writeOutput(f"Read entity id:\t{existing_entity['RowKey']}")
+    writeOutput(f"Read entity:\t{existing_entity}")
 
     category = "gear-surf-surfboards"
     filter = f"PartitionKey eq '{category}'"
