@@ -1,23 +1,41 @@
-# <imports>
-from azure.identity import DefaultAzureCredential
+from dotenv import load_dotenv
+
+from azure.core.credentials import AzureNamedKeyCredential
 from azure.data.tables import TableServiceClient
 
-# </imports>
-
 import json
+import os
+
+def getLastRequestCharge(c):
+    return c.client_connection.last_response_headers["x-ms-request-charge"]
 
 
-def runDemo(endpoint, table_name, writeOutput):
+def runDemo(writeOutput):
+    load_dotenv()
+
     # <create_client>
-    credential = DefaultAzureCredential()
+    accountName = os.getenv("CONFIGURATION__AZURECOSMOSDB__ACCOUNTNAME")
+    if not accountName:
+        raise EnvironmentError("Azure Cosmos DB for NoSQL account name not set.")
 
-    client = TableServiceClient(endpoint, credential=credential)
+    endpoint = os.getenv("CONFIGURATION__AZURECOSMOSDB__ENDPOINT")
+    if not endpoint:
+        raise EnvironmentError("Azure Cosmos DB for NoSQL account endpoint not set.")
 
-    table = client.get_table_client(table_name)
+    key = os.getenv("CONFIGURATION__AZURECOSMOSDB__KEY")
+    if not key:
+        raise EnvironmentError("Azure Cosmos DB for NoSQL write key not set.")
+
+    credential = AzureNamedKeyCredential(accountName, key)
+
+    client = TableServiceClient(endpoint=endpoint, credential=credential)
     # </create_client>
+
+    tableName = os.getenv("CONFIGURATION__AZURECOSMOSDB__TABLENAME", "cosmicworks-products")
+    table = client.get_table_client(tableName)
+
     writeOutput(f"Get table:\t{table.table_name}")
 
-    # <create_entity>
     new_entity = {
         "RowKey": "70b63682-b93a-4c77-aad2-65501347265f",
         "PartitionKey": "gear-surf-surfboards",
@@ -26,7 +44,7 @@ def runDemo(endpoint, table_name, writeOutput):
         "Sale": False,
     }
     created_entity = table.upsert_entity(new_entity)
-    # </create_entity>
+
     writeOutput(f"Upserted entity:\t{created_entity}")
 
     new_entity = {
@@ -39,22 +57,23 @@ def runDemo(endpoint, table_name, writeOutput):
     created_entity = table.upsert_entity(new_entity)
     writeOutput(f"Upserted entity:\t{created_entity}")
 
-    # <read_item>
     existing_item = table.get_entity(
         row_key="70b63682-b93a-4c77-aad2-65501347265f",
         partition_key="gear-surf-surfboards",
     )
-    # </read_item>
-    writeOutput(f"Read entity id:\t{existing_item.row_key}")
+
+    writeOutput(f"Read entity id:\t{existing_item['RowKey']}")
     writeOutput(f"Read entity:\t{existing_item}")
 
-    # <query_items>
     category = "gear-surf-surfboards"
     filter = f"PartitionKey eq '{category}'"
     entities = table.query_entities(query_filter=filter)
-    # </query_items>
-    # <parse_results>
-    output = json.dumps(entities, indent=True)
-    # </parse_results>
+
+    result = []
+    for entity in entities:
+        result.append(entity)
+
+    output = json.dumps(result, indent=True)
+
     writeOutput("Found entities:")
     writeOutput(output, isCode=True)

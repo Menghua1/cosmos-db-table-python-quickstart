@@ -7,25 +7,21 @@ import os
 
 app = Flask(__name__)
 
-socket = SocketIO(app)
-
-# <environment_variables>
-endpoint = os.getenv("AZURE_COSMOS_DB_TABLE_ENDPOINT")
-table_name = os.getenv("AZURE_COSMOS_DB_TABLE_NAME")
-# </environment_variables>
-
-print(f"ENDPOINT: {endpoint}")
-
+socket = SocketIO(
+    app,
+    cors_allowed_origins="*",
+    transports=["websocket", "polling"]
+)
 
 @app.route("/")
 def index():
-    return render_template("index.html", endpoint=endpoint)
+    return render_template("index.html")
 
 
-@socket.on("start", namespace="/cosmos-db-table")
+@socket.on("start", namespace="/cosmos-db-nosql")
 def start(data):
     emitOutput("Current Status:\tStarting...")
-    runDemo(endpoint, table_name, emitOutput)
+    runDemo(emitOutput)
 
 
 def emitOutput(message, isCode=False):
