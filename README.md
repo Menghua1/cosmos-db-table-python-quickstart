@@ -1,3 +1,4 @@
+<!--
 ---
 page_type: sample
 name: "Quickstart: Azure Cosmos DB for Table and Azure SDK for Python"
@@ -9,18 +10,19 @@ languages:
 products:
 - azure-cosmos-db
 ---
+-->
 
 # Quickstart: Azure Cosmos DB for Table - Azure SDK for Python
 
 This is a simple Flask web application to illustrate common basic usage of Azure Cosmos DB for Table with the Azure SDK for Python.
 
-### Prerequisites
+## Prerequisites
 
 - [Docker](https://www.docker.com/)
 - [Azure Developer CLI](https://aka.ms/azd-install)
 - [Python 3.12](https://www.python.org/downloads/)
 
-### Quickstart
+## Quickstart
 
 1. Log in to Azure Developer CLI.
 
