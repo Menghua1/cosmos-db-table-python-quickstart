@@ -37,7 +37,7 @@ def runDemo(writeOutput):
     writeOutput(f"Get table:\t{table.table_name}")
 
     new_entity = {
-        "RowKey": "70b63682-b93a-4c77-aad2-65501347265f",
+        "RowKey": "aaaaaaaa-0000-1111-2222-bbbbbbbbbbbb",
         "PartitionKey": "gear-surf-surfboards",
         "Name": "Yamba Surfboard",
         "Quantity": 12,
@@ -48,7 +48,7 @@ def runDemo(writeOutput):
     writeOutput(f"Upserted entity:\t{created_entity}")
 
     new_entity = {
-        "RowKey": "25a68543-b90c-439d-8332-7ef41e06a0e0",
+        "RowKey": "bbbbbbbb-1111-2222-3333-cccccccccccc",
         "PartitionKey": "gear-surf-surfboards",
         "Name": "Kiama Classic Surfboard",
         "Quantity": 4,
@@ -58,7 +58,7 @@ def runDemo(writeOutput):
     writeOutput(f"Upserted entity:\t{created_entity}")
 
     existing_entity = table.get_entity(
-        row_key="70b63682-b93a-4c77-aad2-65501347265f",
+        row_key="aaaaaaaa-0000-1111-2222-bbbbbbbbbbbb",
         partition_key="gear-surf-surfboards",
     )
 
