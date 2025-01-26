@@ -4,3 +4,6 @@ azure-data-tables==12.5.0
 gunicorn==23.0.0
 eventlet==0.37.0
 python-dotenv==1.0.1
+azure-identity == 1.13.0
+azure-keyvault-secrets == 4.4.*
+pydantic_settings==2.7.1

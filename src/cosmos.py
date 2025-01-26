@@ -1,7 +1,11 @@
+from typing import Optional
 from dotenv import load_dotenv
 
 from azure.core.credentials import AzureNamedKeyCredential
 from azure.data.tables import TableServiceClient
+from azure.identity import DefaultAzureCredential
+from pydantic_settings import BaseSettings
+from azure.keyvault.secrets import SecretClient
 
 import json
 import os
@@ -9,6 +13,26 @@ import os
 def getLastRequestCharge(c):
     return c.client_connection.last_response_headers["x-ms-request-charge"]
 
+def keyvault_name_as_attr(name: str) -> str:
+    return name.replace("-", "_").upper()
+
+class Settings(BaseSettings):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+        # Load secrets from keyvault
+        if self.AZURE_KEY_VAULT_ENDPOINT:
+            credential = DefaultAzureCredential()
+            keyvault_client = SecretClient(self.AZURE_KEY_VAULT_ENDPOINT, credential)
+            for secret in keyvault_client.list_properties_of_secrets():
+                setattr(
+                    self,
+                    keyvault_name_as_attr(secret.name),
+                    keyvault_client.get_secret(secret.name).value,
+                )
+
+    KEY_VAULT_SECRET_AZURE_COSMOS_DB_TABLE_KEY: str = ""
+    AZURE_KEY_VAULT_ENDPOINT: Optional[str] = None
 
 def runDemo(writeOutput):
     load_dotenv()
@@ -22,7 +46,8 @@ def runDemo(writeOutput):
     if not endpoint:
         raise EnvironmentError("Azure Cosmos DB for Table account endpoint not set.")
 
-    key = os.getenv("CONFIGURATION__AZURECOSMOSDB__KEY")
+    settings = Settings()  
+    key = settings.KEY_VAULT_SECRET_AZURE_COSMOS_DB_TABLE_KEY
     if not key:
         raise EnvironmentError("Azure Cosmos DB for Table write key not set.")
 

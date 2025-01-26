@@ -220,6 +220,14 @@ module containerAppsApp 'br/public:avm/res/app/container-app:0.9.0' = {
             name: 'CONFIGURATION__AZURECOSMOSDB__TABLENAME'
             value: tableName
           }
+          {
+            name: 'AZURE_KEY_VAULT_ENDPOINT'
+            value: keyVault.outputs.uri
+          }
+          {
+            name: 'AZURE_CLIENT_ID'
+            value: managedIdentity.outputs.clientId
+          }
         ]
       }
     ]
@@ -230,10 +238,10 @@ module containerAppsApp 'br/public:avm/res/app/container-app:0.9.0' = {
 output CONFIGURATION__AZURECOSMOSDB__ACCOUNTNAME string = cosmosDbAccount.outputs.name
 output CONFIGURATION__AZURECOSMOSDB__ENDPOINT string = 'https://${cosmosDbAccount.outputs.name}.table.cosmos.azure.com:443/'
 #disable-next-line outputs-should-not-contain-secrets // This secret is required
-output CONFIGURATION__AZURECOSMOSDB__KEY string = listKeys(
-  resourceId('Microsoft.DocumentDB/databaseAccounts', 'cosmos-db-table-${resourceToken}'),
-  '2021-04-15'
-).primaryMasterKey
+// output CONFIGURATION__AZURECOSMOSDB__KEY string = listKeys(
+//   resourceId('Microsoft.DocumentDB/databaseAccounts', 'cosmos-db-table-${resourceToken}'),
+//   '2021-04-15'
+// ).primaryMasterKey
 output CONFIGURATION__AZURECOSMOSDB__TABLENAME string = tableName
 
 // Azure Container Registry outputs
